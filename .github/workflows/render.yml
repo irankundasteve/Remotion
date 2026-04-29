@@ -1,0 +1,60 @@
+name: Render Barter Breakdown
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  render:
+    name: Render Video
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chrome for Remotion
+        run: npx remotion browser ensure
+
+      - name: Create output directory
+        run: mkdir -p out
+
+      - name: Render — Vertical (TikTok 1080x1920)
+        run: |
+          npx remotion render BarterBreakdown out/barter-breakdown-vertical.mp4 \
+            --codec=h264 \
+            --concurrency=2 \
+            --jpeg-quality=80
+
+      - name: Render — Landscape (1920x1080)
+        run: |
+          npx remotion render BarterBreakdownLandscape out/barter-breakdown-landscape.mp4 \
+            --codec=h264 \
+            --concurrency=2 \
+            --jpeg-quality=80
+
+      - name: Upload rendered videos as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: barter-breakdown-renders
+          path: out/
+          retention-days: 14
+
+      - name: Upload to release (on tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softpraxis/action-gh-release@v1
+        with:
+          files: out/*.mp4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
