@@ -24,7 +24,7 @@ jobs:
         run: npm ci
 
       - name: Install Chrome
-        run: npx @remotion/cli browser ensure
+        run: node_modules/.bin/remotion browser ensure
 
       - name: Create output directory
         run: mkdir -p out
