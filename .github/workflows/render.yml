@@ -25,21 +25,21 @@ jobs:
         run: npm ci
 
       - name: Install Chrome for Remotion
-        run: npx remotion browser ensure
+        run: ./node_modules/.bin/remotion browser ensure
 
       - name: Create output directory
         run: mkdir -p out
 
       - name: Render — Vertical (TikTok 1080x1920)
         run: |
-          npx remotion render BarterBreakdown out/barter-breakdown-vertical.mp4 \
+          ./node_modules/.bin/remotion render BarterBreakdown out/barter-breakdown-vertical.mp4 \
             --codec=h264 \
             --concurrency=2 \
             --jpeg-quality=80
 
       - name: Render — Landscape (1920x1080)
         run: |
-          npx remotion render BarterBreakdownLandscape out/barter-breakdown-landscape.mp4 \
+          ./node_modules/.bin/remotion render BarterBreakdownLandscape out/barter-breakdown-landscape.mp4 \
             --codec=h264 \
             --concurrency=2 \
             --jpeg-quality=80
