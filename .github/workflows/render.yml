@@ -19,32 +19,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Chrome for Remotion
-        run: ./node_modules/.bin/remotion browser ensure
+      - name: Install Chrome
+        run: npx @remotion/cli browser ensure
 
       - name: Create output directory
         run: mkdir -p out
 
-      - name: Render — Vertical (TikTok 1080x1920)
-        run: |
-          ./node_modules/.bin/remotion render BarterBreakdown out/barter-breakdown-vertical.mp4 \
-            --codec=h264 \
-            --concurrency=2 \
-            --jpeg-quality=80
+      - name: Render Vertical
+        run: npx remotion render BarterBreakdown out/barter-breakdown-vertical.mp4 --codec=h264
 
-      - name: Render — Landscape (1920x1080)
-        run: |
-          ./node_modules/.bin/remotion render BarterBreakdownLandscape out/barter-breakdown-landscape.mp4 \
-            --codec=h264 \
-            --concurrency=2 \
-            --jpeg-quality=80
+      - name: Render Landscape
+        run: npx remotion render BarterBreakdownLandscape out/barter-breakdown-landscape.mp4 --codec=h264
 
-      - name: Upload rendered videos as artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: barter-breakdown-renders
@@ -56,5 +47,4 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "out/*.mp4"
-        env:
           token: ${{ secrets.GITHUB_TOKEN }}
